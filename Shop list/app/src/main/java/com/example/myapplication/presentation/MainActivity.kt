@@ -5,24 +5,26 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.R
+import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private var count = 0
+    private lateinit var adapter: ShopListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            Log.i("MyLog", it.toString())
-
-            if (count == 0) {
-                count++
-                val item = it[0]
-                viewModel.changeEnableState(item)
-            }
-
+            setupRecycleView()
         }
+    }
+
+    private fun setupRecycleView() {
+        adapter = ShopListAdapter()
+        binding.rvShopList.adapter = adapter
     }
 }

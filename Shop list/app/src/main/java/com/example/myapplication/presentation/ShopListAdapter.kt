@@ -5,32 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemShopEnabledBinding
 import com.example.myapplication.domain.ShopItem
 
-class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
-    var shopList = listOf<ShopItem>()
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+class ShopListAdapter : ListAdapter<ShopItem, ShopItemHolder>(ShopItemDiffCallback()) {
+
     var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
     var onShopItemClickListener: ((ShopItem) -> Unit)? = null
-
-    inner class ShopItemHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val binding = ItemShopEnabledBinding.bind(view)
-
-        fun bind(shopItem: ShopItem) {
-            binding.apply {
-                tvName.text = shopItem.name
-                tvCount.text = shopItem.count.toString()
-            }
-
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemHolder {
         val layout = when (viewType) {
@@ -42,12 +27,9 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
         return ShopItemHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return shopList.size
-    }
 
     override fun onBindViewHolder(holder: ShopItemHolder, position: Int) {
-        val shopItem = shopList[position]
+        val shopItem = getItem(position)
 
         holder.bind(shopItem)
 
@@ -61,7 +43,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = shopList[position]
+        val item = getItem(position)
 
         return if (item.enabled) {
             VIEW_TYPE_ENABLED

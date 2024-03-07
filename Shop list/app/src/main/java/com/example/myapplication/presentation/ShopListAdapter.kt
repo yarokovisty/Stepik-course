@@ -1,5 +1,6 @@
 package com.example.myapplication.presentation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +12,15 @@ import com.example.myapplication.domain.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
     var shopList = listOf<ShopItem>()
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()
         }
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
 
-    class ShopItemHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ShopItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemShopEnabledBinding.bind(view)
 
         fun bind(shopItem: ShopItem) {
@@ -24,6 +28,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
                 tvName.text = shopItem.name
                 tvCount.text = shopItem.count.toString()
             }
+
         }
     }
 
@@ -42,7 +47,17 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemHolder>() {
     }
 
     override fun onBindViewHolder(holder: ShopItemHolder, position: Int) {
-        holder.bind(shopList[position])
+        val shopItem = shopList[position]
+
+        holder.bind(shopItem)
+
+        holder.itemView.setOnClickListener {
+            onShopItemClickListener?.invoke(shopItem)
+        }
+        holder.itemView.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
+            true
+        }
     }
 
     override fun getItemViewType(position: Int): Int {

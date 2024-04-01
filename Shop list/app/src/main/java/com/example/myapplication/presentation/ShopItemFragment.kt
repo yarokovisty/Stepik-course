@@ -120,8 +120,8 @@ class ShopItemFragment : Fragment() {
         }
     }
 
-    private fun addTextChangeListeners() = with(binding) {
-        etName.addTextChangedListener(object : TextWatcher {
+    private fun addTextChangeListeners(){
+        binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -132,7 +132,7 @@ class ShopItemFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
-        etCount.addTextChangedListener(object : TextWatcher {
+        binding.etCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -146,46 +146,29 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun launchRightMode() {
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         when (screenMode) {
             MODE_EDIT -> launchEditMode()
             MODE_ADD  -> launchAddMode()
         }
     }
 
-    private fun launchEditMode() = with(binding) {
+    private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItem.observe(viewLifecycleOwner) {
-            etName.setText(it.name)
-            etCount.setText(it.count.toString())
-        }
-        btnSave.setOnClickListener {
-            viewModel.editShopItem(etName.text?.toString(), etCount.text?.toString())
+
+        binding.btnSave.setOnClickListener {
+            viewModel.editShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
         }
     }
 
-    private fun launchAddMode() = with(binding) {
-        btnSave.setOnClickListener {
-            viewModel.addShopItem(etName.text?.toString(), etCount.text?.toString())
+    private fun launchAddMode(){
+        binding.btnSave.setOnClickListener {
+            viewModel.addShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
         }
     }
 
-    private fun observeViewModel() = with(binding){
-        viewModel.errorInputCount.observe(viewLifecycleOwner) {
-            val message = if (it) {
-                getString(R.string.error_input_count)
-            } else {
-                null
-            }
-            tilCount.error = message
-        }
-        viewModel.errorInputName.observe(viewLifecycleOwner) {
-            val message = if (it) {
-                getString(R.string.error_input_name)
-            } else {
-                null
-            }
-            tilName.error = message
-        }
+    private fun observeViewModel() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }

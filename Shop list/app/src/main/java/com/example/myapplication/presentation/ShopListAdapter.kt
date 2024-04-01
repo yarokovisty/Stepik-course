@@ -5,11 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.databinding.ItemShopEnabledBinding
 import com.example.myapplication.domain.ShopItem
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemHolder>(ShopItemDiffCallback()) {
@@ -23,8 +24,15 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemHolder>(ShopItemDiffCallba
             VIEW_TYPE_DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("Unknown view type: $viewType")
         }
-        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return ShopItemHolder(view)
+
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            layout,
+            parent,
+            false
+        )
+
+        return ShopItemHolder(binding)
     }
 
 

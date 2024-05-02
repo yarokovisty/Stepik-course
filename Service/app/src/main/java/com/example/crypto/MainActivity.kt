@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
+import android.app.job.JobWorkItem
 import android.content.ComponentName
 import android.os.Build
 import android.os.Bundle
@@ -16,10 +17,13 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.example.crypto.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var page = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +51,24 @@ class MainActivity : AppCompatActivity() {
                 .setRequiresCharging(true)
                 .build()
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-            jobScheduler.schedule(jobInfo)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val intent = MyJobService.newIntent(page++)
+                jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+            } else {
+                startService(MyIntentService2.newIntent(this, page++))
+            }
+        }
+        binding.jobIntentService.setOnClickListener {
+            MyJobIntentService.enqueue(this, page++)
+        }
+        binding.workManager.setOnClickListener {
+            val workManager = WorkManager.getInstance(applicationContext)
+            workManager.enqueueUniqueWork(
+                MyWorker.WORK_NAME,
+                ExistingWorkPolicy.APPEND,
+                MyWorker.makeRequest(page)
+            )
         }
 
     }

@@ -1,13 +1,10 @@
-package com.example.myapplication.presentation
+package com.example.myapplication.ui
 
-import android.view.LayoutInflater
-import android.view.View
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.ItemShopDisabledBinding
 import com.example.myapplication.databinding.ItemShopEnabledBinding
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.domain.entity.ShopItem
 
 class ShopItemHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
 

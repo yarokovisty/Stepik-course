@@ -1,7 +1,6 @@
-package com.example.myapplication.presentation
+package com.example.myapplication.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,10 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.myapplication.R
-import com.example.myapplication.databinding.ActivityShopItemBinding
 import com.example.myapplication.databinding.FragmentShopItemBinding
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.domain.entity.ShopItem
+import com.example.myapplication.presentation.ShopItemViewModel
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null

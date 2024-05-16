@@ -1,6 +1,7 @@
-package com.example.myapplication.domain
+package com.example.myapplication.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.example.myapplication.domain.entity.ShopItem
 
 interface ShopListRepository {
     suspend fun addShopItem(shopItem: ShopItem)

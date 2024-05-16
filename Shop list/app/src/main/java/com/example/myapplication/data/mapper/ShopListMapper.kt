@@ -1,6 +1,7 @@
-package com.example.myapplication.data
+package com.example.myapplication.data.mapper
 
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.data.database.model.ShopItemDbModel
+import com.example.myapplication.domain.entity.ShopItem
 
 class ShopListMapper {
 

@@ -4,14 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.ShopListRepositoryImpl
-import com.example.myapplication.domain.AddShopItemUseCase
-import com.example.myapplication.domain.EditShopItemUseCase
-import com.example.myapplication.domain.GetShopItemUseCase
-import com.example.myapplication.domain.GetShopListUseCase
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.data.repository.ShopListRepositoryImpl
+import com.example.myapplication.domain.usecase.AddShopItemUseCase
+import com.example.myapplication.domain.usecase.EditShopItemUseCase
+import com.example.myapplication.domain.usecase.GetShopItemUseCase
+import com.example.myapplication.domain.entity.ShopItem
 import kotlinx.coroutines.launch
 
 class ShopItemViewModel(application: Application) : AndroidViewModel(application) {

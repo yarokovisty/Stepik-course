@@ -1,17 +1,12 @@
-package com.example.myapplication.presentation
+package com.example.myapplication.ui
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.domain.entity.ShopItem
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemHolder>(ShopItemDiffCallback()) {
 

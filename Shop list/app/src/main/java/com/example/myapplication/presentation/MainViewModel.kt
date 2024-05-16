@@ -2,15 +2,12 @@ package com.example.myapplication.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.ShopListRepositoryImpl
-import com.example.myapplication.domain.DeleteShopItemUseCase
-import com.example.myapplication.domain.EditShopItemUseCase
-import com.example.myapplication.domain.GetShopListUseCase
-import com.example.myapplication.domain.ShopItem
+import com.example.myapplication.data.repository.ShopListRepositoryImpl
+import com.example.myapplication.domain.usecase.DeleteShopItemUseCase
+import com.example.myapplication.domain.usecase.EditShopItemUseCase
+import com.example.myapplication.domain.usecase.GetShopListUseCase
+import com.example.myapplication.domain.entity.ShopItem
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {

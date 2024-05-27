@@ -1,4 +1,4 @@
-package com.example.myapplication.ui
+package com.example.myapplication.ui.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.myapplication.domain.entity.ShopItem

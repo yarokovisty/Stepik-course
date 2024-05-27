@@ -2,10 +2,13 @@ package com.example.myapplication.domain.usecase
 
 import com.example.myapplication.domain.entity.ShopItem
 import com.example.myapplication.domain.repository.ShopListRepository
+import javax.inject.Inject
 
-class AddShopItemUseCase(private val shopListRepository: ShopListRepository) {
+class AddShopItemUseCase @Inject constructor(
+    private val shopListRepository: ShopListRepository
+) {
 
-    suspend fun addShopItem(shopItem: ShopItem) {
+    suspend operator fun invoke(shopItem: ShopItem) {
         shopListRepository.addShopItem(shopItem)
     }
 }

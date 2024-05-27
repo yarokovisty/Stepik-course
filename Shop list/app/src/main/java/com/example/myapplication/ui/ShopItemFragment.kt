@@ -12,7 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.FragmentShopItemBinding
 import com.example.myapplication.domain.entity.ShopItem
+import com.example.myapplication.presentation.ShopApplication
 import com.example.myapplication.presentation.ShopItemViewModel
+import com.example.myapplication.presentation.ViewModelFactory
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null
@@ -24,21 +27,27 @@ class ShopItemFragment : Fragment() {
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as ShopApplication).component
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        component.inject(this)
+
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
             throw RuntimeException("Activity must implement OnEditingFinishedListener")
         }
-        Log.i("MyLog", "onAttach")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
-        Log.i("MyLog", "onCreate")
     }
 
     override fun onCreateView(
@@ -46,7 +55,6 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.i("MyLog", "onCreateView")
         _binding = FragmentShopItemBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -55,50 +63,18 @@ class ShopItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.i("MyLog", "onViewCreated")
-
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         addTextChangeListeners()
         launchRightMode()
         observeViewModel()
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        Log.i("MyLog", "onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.i("MyLog", "onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.i("MyLog", "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.i("MyLog", "onStop")
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        Log.i("MyLog", "onDestroyView")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("MyLog", "onDestroy")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.i("MyLog", "onDetach")
-    }
 
     private fun parseParams() {
         val args = requireArguments()

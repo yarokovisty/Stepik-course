@@ -1,4 +1,4 @@
-package com.example.dagger.example2
+package com.example.dagger.example2.presentation
 
 import android.app.Application
 import com.example.dagger.example2.di.components.DaggerAppComponent

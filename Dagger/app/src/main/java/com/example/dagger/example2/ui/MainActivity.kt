@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.dagger.R
-import com.example.dagger.example1.Activity
-import com.example.dagger.example2.ExampleApp
-import com.example.dagger.example2.di.components.DaggerAppComponent
-import com.example.dagger.example2.di.modules.DataModule
+import com.example.dagger.example2.presentation.ExampleApp
 import com.example.dagger.example2.presentation.ExampleViewModel
 import com.example.dagger.example2.presentation.ViewModelFactory
 import javax.inject.Inject
@@ -23,6 +20,8 @@ class MainActivity : AppCompatActivity() {
 
     private val component by lazy {
         (application as ExampleApp).component
+            .activityComponentFactory()
+            .create("MY_ID", "MY_NAME")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

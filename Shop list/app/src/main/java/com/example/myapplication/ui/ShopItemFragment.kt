@@ -1,6 +1,8 @@
 package com.example.myapplication.ui
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.myapplication.data.contentprovider.ShopListProvider
 import com.example.myapplication.databinding.FragmentShopItemBinding
 import com.example.myapplication.domain.entity.ShopItem
 import com.example.myapplication.presentation.ShopApplication
 import com.example.myapplication.presentation.ShopItemViewModel
 import com.example.myapplication.presentation.ViewModelFactory
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null
@@ -139,6 +143,19 @@ class ShopItemFragment : Fragment() {
     private fun launchAddMode(){
         binding.btnSave.setOnClickListener {
             viewModel.addShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
+
+//            thread {
+//                context?.contentResolver?.insert(
+//                    Uri.parse("content://com.example.myapplication/shop_items"),
+//                    ContentValues().apply {
+//                        put(ShopListProvider.ID_PROVIDER, 0)
+//                        put(ShopListProvider.NAME_PROVIDER, binding.etName.text?.toString())
+//                        put(ShopListProvider.COUNT_PROVIDER, binding.etCount.text?.toString()?.toInt())
+//                        put(ShopListProvider.ENABLED_PROVIDER, true)
+//                    }
+//                )
+//            }
+
         }
     }
 

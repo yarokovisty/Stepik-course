@@ -68,10 +68,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             )
 
             while (cursor?.moveToNext() == true) {
-                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
-                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow(ID_PROVIDER))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(NAME_PROVIDER))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow(COUNT_PROVIDER))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(ENABLED_PROVIDER)) > 0
                 val shopItem = ShopItem(
                     id = id,
                     name = name,
@@ -119,6 +119,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = adapter.currentList[viewHolder.adapterPosition]
                 viewModel.deleteShopItem(item)
+
+//                thread {
+//                    contentResolver.delete(
+//                        Uri.parse("content://com.example.myapplication/shop_items"),
+//                        null,
+//                        arrayOf(item.id.toString())
+//                    )
+//                }
+
             }
 
         }
@@ -157,6 +166,13 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     override fun onEditingFinished() {
         Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
+    }
+
+    companion object {
+        private const val ID_PROVIDER = "id"
+        private const val NAME_PROVIDER = "name"
+        private const val COUNT_PROVIDER = "count"
+        private const val ENABLED_PROVIDER = "enabled"
     }
 
 }

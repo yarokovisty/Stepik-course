@@ -1,10 +1,14 @@
 package com.example.myapplication.ui
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -13,7 +17,10 @@ import com.example.myapplication.presentation.MainViewModel
 import com.example.myapplication.presentation.ShopApplication
 import com.example.myapplication.presentation.ViewModelFactory
 import com.example.myapplication.ui.adapter.ShopListAdapter
+import com.example.myapplication.domain.entity.ShopItem
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -28,6 +35,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         (application as ShopApplication).component
     }
 
+    @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
 
@@ -47,6 +55,33 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
 
+        }
+
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.example.myapplication/shop_items"),
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+
+
+                Log.i("MyLog", shopItem.toString())
+            }
         }
     }
 

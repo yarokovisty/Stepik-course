@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.example.coroutinesweathercity.databinding.ActivityMainBinding
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
@@ -25,8 +26,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonLoad.setOnClickListener {
+            binding.progress.isVisible = true
+            binding.buttonLoad.isEnabled = false
+
+            val deferredCity = lifecycleScope.async {
+                loadCity()
+            }
+            val deferredTemp = lifecycleScope.async {
+                loadTemperature()
+            }
             lifecycleScope.launch {
-                loadDate()
+                val city = deferredCity.await()
+                binding.tvLocation.text = city
+
+                val temp = deferredTemp.await()
+                binding.tvTemperature.text = temp.toString()
+
+                Toast.makeText(
+                    this@MainActivity,
+                    "City: $city; Temp: $temp",
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.progress.isVisible = false
+                binding.buttonLoad.isEnabled = true
             }
 //            loadWithoutCoroutine()
         }
@@ -39,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val city = loadCity()
 
         binding.tvLocation.text = city
-        val temp = loadTemperature(city)
+        val temp = loadTemperature()
 
         binding.tvTemperature.text = temp.toString()
         binding.progress.isVisible = false
@@ -49,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadWithoutCoroutine(step: Int = 0, obj: Any? = null) {
-        when(step) {
+        when (step) {
             0 -> {
                 Log.i("MyLog", "Load started: $this")
                 binding.progress.isVisible = true
@@ -58,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                     loadWithoutCoroutine(1, it)
                 }
             }
+
             1 -> {
                 val city = obj as String
                 binding.tvLocation.text = city
@@ -65,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                     loadWithoutCoroutine(2, it)
                 }
             }
+
             2 -> {
                 val temp = obj as Int
                 binding.tvTemperature.text = temp.toString()
@@ -77,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private suspend fun loadCity(): String {
-        delay(5000)
+        delay(3000)
         return "Tomsk"
     }
 
@@ -88,12 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private suspend fun loadTemperature(city: String): Int {
-        Toast.makeText(
-            this,
-            getString(R.string.loading_temperature_toast, city),
-            Toast.LENGTH_SHORT
-        ).show()
+    private suspend fun loadTemperature(): Int {
         delay(5000)
         return 17
     }
@@ -107,7 +126,6 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             callback.invoke(17)
         }, 5000)
-
 
 
     }

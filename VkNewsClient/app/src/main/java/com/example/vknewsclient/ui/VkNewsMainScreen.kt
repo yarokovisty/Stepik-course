@@ -1,36 +1,29 @@
 package com.example.vknewsclient.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.vknewsclient.NavigationItem
-import kotlinx.coroutines.launch
+import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.presentation.MainViewModel
 
 @Composable
-fun MainScreen() {
-    val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    var fabIsVisible by remember { mutableStateOf(true) }
-
+fun MainScreen(viewModel: MainViewModel) {
     Scaffold(
         bottomBar = {
             BottomAppBar {
@@ -62,29 +55,22 @@ fun MainScreen() {
                     )
                 }
             }
-        },
-        floatingActionButton = {
-            if (fabIsVisible) {
-                FloatingActionButton(
-                    onClick = {
-                        scope.launch {
-                            val action = snackBarHostState.showSnackbar(
-                                message = "This is snackbar",
-                                actionLabel = "Hide FAB",
-                                duration = SnackbarDuration.Long
-                            )
-                            if (action == SnackbarResult.ActionPerformed) {
-                                fabIsVisible = false
-                            }
-                        }
-                    }
-                ) {
-                    Icon(Icons.Filled.Favorite, contentDescription = null)
-                }
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
         }
-    ) {}
+    ) {
+        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
+
+        PostCard(
+            modifier = Modifier.padding(
+                start = 8.dp,
+                top = 8.dp,
+                end = 8.dp,
+                bottom = it.calculateBottomPadding()
+            ),
+            feedPost = feedPost.value,
+            onViewsClickListener = viewModel::updateCount,
+            onShareClickListener = viewModel::updateCount,
+            onCommentClickListener = viewModel::updateCount,
+            onLikeClickListener = viewModel::updateCount,
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.instagramcard.ui
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,11 +20,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,10 +39,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.instagramcard.R
-import com.example.instagramcard.ui.theme.InstagramCardTheme
+import com.example.instagramcard.presentation.MainViewModel
 
 @Composable
-fun InstagramProfileCard() {
+fun InstagramProfileCard(
+    viewModel: MainViewModel
+) {
+    val isFollowed = viewModel.isFollowing.observeAsState(false)
+
     Card(
         modifier = Modifier.padding(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
@@ -60,9 +72,7 @@ fun InstagramProfileCard() {
                 text = "www.facebook.com/emotional_health",
                 fontSize = 14.sp
             )
-            Button(onClick = {}) {
-                Text("Follow")
-            }
+            FollowButton(isFollowed) { viewModel.changeFollowingStatus() }
         }
 
     }
@@ -92,6 +102,30 @@ private fun UserProfileStatsRow() {
 }
 
 @Composable
+private fun FollowButton(
+    isFollowed: State<Boolean>,
+    clickListener: () -> Unit
+) {
+    Button(
+        onClick = { clickListener() },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isFollowed.value) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colorScheme.primary
+            }
+        )
+    ) {
+        val text = if (isFollowed.value) {
+            "Unfollow"
+        } else {
+            "Follow"
+        }
+        Text(text)
+    }
+}
+
+@Composable
 private fun UserStatistics(
     title: String,
     value: String
@@ -110,25 +144,5 @@ private fun UserStatistics(
             text = title,
             fontWeight = FontWeight.Bold
         )
-    }
-}
-
-@Preview
-@Composable
-fun PreviewCardLight() {
-    InstagramCardTheme(
-        darkTheme = false
-    ) {
-        InstagramProfileCard()
-    }
-}
-
-@Preview
-@Composable
-fun PreviewCardDark() {
-    InstagramCardTheme(
-        darkTheme = true
-    ) {
-        InstagramProfileCard()
     }
 }

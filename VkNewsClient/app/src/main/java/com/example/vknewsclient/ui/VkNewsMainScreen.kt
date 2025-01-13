@@ -1,17 +1,23 @@
 package com.example.vknewsclient.ui
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -19,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.vknewsclient.NavigationItem
-import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.presentation.MainViewModel
 
 @Composable
@@ -56,21 +61,53 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
             }
         }
-    ) {
-        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
+    ) { paddingValues ->
+        val feedPosts = viewModel.feedPosts.observeAsState(listOf())
 
-        PostCard(
-            modifier = Modifier.padding(
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(
+                top = 16.dp,
                 start = 8.dp,
-                top = 8.dp,
                 end = 8.dp,
-                bottom = it.calculateBottomPadding()
+                bottom = 16.dp
             ),
-            feedPost = feedPost.value,
-            onViewsClickListener = viewModel::updateCount,
-            onShareClickListener = viewModel::updateCount,
-            onCommentClickListener = viewModel::updateCount,
-            onLikeClickListener = viewModel::updateCount,
-        )
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(
+                items = feedPosts.value,
+                key = { it.id }
+            ) { feedPost ->
+                val dismissState = rememberSwipeToDismissBoxState()
+
+                SwipeToDismissBox(
+                    modifier = Modifier.animateItem(),
+                    state = dismissState,
+                    backgroundContent = {},
+                    enableDismissFromStartToEnd = false
+                ) {
+                    if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                        viewModel.remove(feedPost)
+                    }
+                    PostCard(
+                        feedPost = feedPost,
+                        onViewsClickListener = { statisticItem ->
+                            viewModel.updateCount(feedPost, statisticItem)
+                        },
+                        onShareClickListener = { statisticItem ->
+                            viewModel.updateCount(feedPost, statisticItem)
+                        },
+                        onCommentClickListener = { statisticItem ->
+                            viewModel.updateCount(feedPost, statisticItem)
+                        },
+                        onLikeClickListener = { statisticItem ->
+                            viewModel.updateCount(feedPost, statisticItem)
+                        }
+                    )
+                }
+
+
+            }
+        }
     }
 }

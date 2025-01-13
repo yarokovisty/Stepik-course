@@ -1,6 +1,5 @@
 package com.example.instagramcard.ui
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,14 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,18 +26,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.instagramcard.R
-import com.example.instagramcard.presentation.MainViewModel
+import com.example.instagramcard.domain.InstagramModel
 
 @Composable
 fun InstagramProfileCard(
-    viewModel: MainViewModel
+    model: InstagramModel,
+    onFollowedButtonClickListener: (InstagramModel) -> Unit
 ) {
-    val isFollowed = viewModel.isFollowing.observeAsState(false)
-
     Card(
         modifier = Modifier.padding(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
@@ -60,19 +49,19 @@ fun InstagramProfileCard(
         ) {
             UserProfileStatsRow()
             Text(
-                text = "Instagram",
+                text = "Instagram${model.title}",
                 fontSize = 32.sp,
                 fontFamily = FontFamily.Cursive
             )
             Text(
-                text = "#YoursToMake",
+                text = "#${model.title}",
                 fontSize = 14.sp
             )
             Text(
                 text = "www.facebook.com/emotional_health",
                 fontSize = 14.sp
             )
-            FollowButton(isFollowed) { viewModel.changeFollowingStatus() }
+            FollowButton(model.isFollowed) { onFollowedButtonClickListener(model) }
         }
 
     }
@@ -103,20 +92,20 @@ private fun UserProfileStatsRow() {
 
 @Composable
 private fun FollowButton(
-    isFollowed: State<Boolean>,
+    isFollowed: Boolean,
     clickListener: () -> Unit
 ) {
     Button(
         onClick = { clickListener() },
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isFollowed.value) {
+            containerColor = if (isFollowed) {
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             } else {
                 MaterialTheme.colorScheme.primary
             }
         )
     ) {
-        val text = if (isFollowed.value) {
+        val text = if (isFollowed) {
             "Unfollow"
         } else {
             "Follow"

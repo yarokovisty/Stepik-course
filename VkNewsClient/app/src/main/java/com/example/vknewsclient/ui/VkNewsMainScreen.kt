@@ -1,113 +1,96 @@
 package com.example.vknewsclient.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.vknewsclient.NavigationItem
-import com.example.vknewsclient.presentation.MainViewModel
+import com.example.vknewsclient.domain.FeedPost
+import com.example.vknewsclient.navigation.AppNavGraph
+import com.example.vknewsclient.navigation.NavigationState
+import com.example.vknewsclient.navigation.Screen
+import com.example.vknewsclient.navigation.rememberNavigationState
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen() {
+    val navigationState = rememberNavigationState()
+
     Scaffold(
         bottomBar = {
-            BottomAppBar {
-                val items = listOf(
-                    NavigationItem.Home,
-                    NavigationItem.Favourite,
-                    NavigationItem.Profile
-                )
-                var selectedItemPosition by remember { mutableIntStateOf(0) }
-                items.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = selectedItemPosition == index,
-                        onClick = { selectedItemPosition = index },
-                        icon = {
-                            Icon(imageVector = item.icon, contentDescription = null)
-                        },
-                        label = {
-                            Text(text = stringResource(item.titleResId))
-                        },
-                        colors = NavigationBarItemColors(
-                            selectedIconColor = Color.Blue,
-                            unselectedIconColor = Color.Gray,
-                            disabledIconColor = Color.LightGray,
-                            selectedTextColor = Color.Blue,
-                            unselectedTextColor = Color.Gray,
-                            disabledTextColor = Color.LightGray,
-                            selectedIndicatorColor = Color.Transparent
-                        )
-                    )
-                }
-            }
+            VkBottomBar(navigationState)
         }
     ) { paddingValues ->
-        val feedPosts = viewModel.feedPosts.observeAsState(listOf())
-
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(
-                items = feedPosts.value,
-                key = { it.id }
-            ) { feedPost ->
-                val dismissState = rememberSwipeToDismissBoxState()
-
-                SwipeToDismissBox(
-                    modifier = Modifier.animateItem(),
-                    state = dismissState,
-                    backgroundContent = {},
-                    enableDismissFromStartToEnd = false
-                ) {
-                    if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                        viewModel.remove(feedPost)
+        AppNavGraph(
+            navHostController = navigationState.navHostController,
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentClickListener = {
+                        navigationState.navigateToComments(it)
                     }
-                    PostCard(
-                        feedPost = feedPost,
-                        onViewsClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onShareClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onCommentClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        },
-                        onLikeClickListener = { statisticItem ->
-                            viewModel.updateCount(feedPost, statisticItem)
-                        }
-                    )
-                }
+                )
+            },
+            commentsScreenContent = { feedPost ->
+                CommentsScreen(
+                    onBackPressed = { navigationState.navHostController.popBackStack() },
+                    feedPost = feedPost
+                )
+            },
+            favouriteScreenContent = { Text("favorite") },
+            profileScreenContent = { Text("profile") }
+        )
+    }
+}
 
-
-            }
+@Composable
+private fun VkBottomBar(
+    navigationState: NavigationState
+) {
+    BottomAppBar {
+        val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
+        val items = listOf(
+            NavigationItem.Home,
+            NavigationItem.Favourite,
+            NavigationItem.Profile
+        )
+        items.forEach { item ->
+            val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                it.route == item.screen.route
+            } ?: false
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    if (!selected) {
+                        navigationState.navigateTo(item.screen.route)
+                    }
+                },
+                icon = {
+                    Icon(imageVector = item.icon, contentDescription = null)
+                },
+                label = {
+                    Text(text = stringResource(item.titleResId))
+                },
+                colors = NavigationBarItemColors(
+                    selectedIconColor = Color.Blue,
+                    unselectedIconColor = Color.Gray,
+                    disabledIconColor = Color.LightGray,
+                    selectedTextColor = Color.Blue,
+                    unselectedTextColor = Color.Gray,
+                    disabledTextColor = Color.LightGray,
+                    selectedIndicatorColor = Color.Transparent
+                )
+            )
         }
     }
 }

@@ -10,9 +10,8 @@ import com.example.vknewsclient.domain.FeedPost
 class NavigationState(
     val navHostController: NavHostController
 ) {
-    fun navigateTo(
-        route: String
-    ) {
+
+    fun navigateTo(route: String) {
         navHostController.navigate(route) {
             popUpTo(navHostController.graph.findStartDestination().id) {
                 saveState = true
@@ -23,7 +22,7 @@ class NavigationState(
     }
 
     fun navigateToComments(feedPost: FeedPost) {
-        navHostController.navigate(Screen.Comments.route)
+        navHostController.navigate(Screen.Comments.getRouteWithArgs(feedPost)) // comments/15
     }
 }
 

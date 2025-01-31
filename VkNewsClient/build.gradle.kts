@@ -4,4 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.vkid.sdk) apply true
+}
+
+vkidManifestPlaceholders {
+    init(
+        clientId = "52988962",
+        clientSecret = "1WSMjalm8E5oERsygbLX",
+    )
 }

@@ -1,4 +1,4 @@
-package com.example.vknewsclient.ui
+package com.example.vknewsclient.ui.screen
 
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.vknewsclient.navigation.NavigationItem
+import com.example.vknewsclient.presentation.main.NavigationItem
 import com.example.vknewsclient.navigation.AppNavGraph
 import com.example.vknewsclient.navigation.NavigationState
 import com.example.vknewsclient.navigation.rememberNavigationState
@@ -29,7 +29,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)

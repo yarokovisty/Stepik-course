@@ -1,4 +1,4 @@
-package com.example.vknewsclient.presentation.viewmodel
+package com.example.vknewsclient.presentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.domain.PostComment
-import com.example.vknewsclient.presentation.state.CommentsScreenState
 
 class CommentsViewModel(
     feedPost: FeedPost

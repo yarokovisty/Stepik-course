@@ -1,4 +1,4 @@
-package com.example.vknewsclient.presentation.state
+package com.example.vknewsclient.presentation.news
 
 import com.example.vknewsclient.domain.FeedPost
 
